@@ -20,23 +20,52 @@
         }
        </style>
         <script>
-            var map,capa1;
-            function init(){
-                map = L.map("map",{
-                center:[41.6863, 1.8382],
-                zoom:8
+            var map, osm, esri, terreno;
+            var controlCapas;
+            var controlEscala;
+
+            function init() {
+                map = L.map('map').setView([41.6863, 1.8382], 8);
+
+                esri = L.tileLayer(
+                    'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                    maxZoom: 17,
+                    minZoom: 1,
+                    attribution: 'Tiles © Esri',
+                }).addTo(map);
+
+                osm = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    minZoom: 1,
+                    attribution: 'OSM'
                 });
-                capa1= L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                {
-                maxZoom : 19,
-                minZoom : 1,
-                attribution : "OSM"
-                });
-                capa1.addTo(map);
+
+                terreno =
+                    L.tileLayer('http://{s}.tile.stamen.com/terrain-background/{z}/{x}/{y}.png', {
+                        maxZoom: 19,
+                        attribution: 'Stamen terrain',
+                        opacity: 0.5
+                    });
+
+                var baseMaps = {
+                    "Orto_esri": esri,
+                    "Mapa_osm": osm
+                };
+                var overlayMaps = {
+                    "Terrain": terreno
+                };
+            
+
+            controlCapas = L.control.layers(baseMaps, overlayMaps,{collapsed:false});
+            controlCapas.addTo(map);
+
+            controlEscala = L.control.scale();
+            controlEscala.addTo(map);
             }
-            </script>
+
+        </script>
     </head>
     <body onLoad="init()">
         <div id="map"></div>
     </body>
-    </html>
+</html>
